@@ -3,8 +3,16 @@ require('dotenv').config()
 
 
 // Connects to the database... if we had one :( 
-// TODO                                        
-
+  const mongoose = require("mongoose")
+  const MONGO_URI = "mongodb://localhost/studentsdb"
+  
+  mongoose.connect(MONGO_URI)
+  .then((response) => {
+    console.log("Conectados a la base de datos")
+  })
+  .catch((err) => {
+    console.log("Error conectando", err)
+  })                             
 
 // Handles http requests (express is node js framework)
 const express = require('express');
