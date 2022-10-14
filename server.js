@@ -32,6 +32,7 @@ app.set('views', __dirname + '/views/' )
 // Local Variables 
 // TODO           
 
+const Student = require('./models/Students.model')
 
 // 👇 Start handling routes here
 app.get('/', (req, res) => {
@@ -46,6 +47,23 @@ app.get('/my-hobbies', (req, res) => {
   res.render("my-hobbies.hbs")
 })
 
+app.get("/users", (req, res) => {
+
+  //1 buscamos a todos los estudiantes
+  Student.find()
+  .then((response) => {
+    console.log(response)
+ 
+    //2 renderizamos una vista con la data
+    res.render("total-users.hbs", {
+      totalUsers: response
+    })
+  })
+  .catch((err)=> {
+    console.log(err)
+  })
+
+})
 
 // To handle errors.
 // TODO            
