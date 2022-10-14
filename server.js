@@ -27,10 +27,18 @@ const hbs = require("hbs");
 app.use(express.static("public"))
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views/' )
+// morgan
+const logger = require("morgan")
+app.use(logger("dev"))
+// serve.favicon
+const favicon = require("serve-favicon")
+app.use(favicon(__dirname + "/public/images/favicon.ico"))
 
 
 // Local Variables 
-// TODO           
+// en app.locals crear una propiedad con cualquier nombre y valor
+// accesible en cualquier lugar de HBS
+app.locals.webName = "Estudiantes de Ironhack"
 
 const Student = require('./models/Students.model')
 
@@ -47,7 +55,10 @@ app.get('/my-hobbies', (req, res) => {
   res.render("my-hobbies.hbs")
 })
 
-app.get("/users", (req, res) => {
+app.get("/users", (req, res, next) => {
+  // next indica, quiero que pases a la proxima ruta
+  // next() => sin argumento. Directamente salta a la proxima ruta
+  // next(arg) => con 1 argumento. pasa al error handler de tipo 500
 
   //1 buscamos a todos los estudiantes
   Student.find()
@@ -60,13 +71,28 @@ app.get("/users", (req, res) => {
     })
   })
   .catch((err)=> {
-    console.log(err)
+    // console.log(err)
+    // res.render("error.hbs")
+    next(err)
   })
 
 })
 
 // To handle errors.
-// TODO            
+// 404 errors
+app.use((req, res) => {
+  // esto es algo que se va a ejecutar siempre, si no se consige ruta anterior.
+  res.status(404).render("not-found.hbs")
+  
+})
+
+// 500 errors
+// el middleware es de tipo 500 por tener 4 argumentos
+app.use((err, req, res, next) => {
+  console.log(err)
+  res.status(500).render("error.hbs")
+
+})
 
 
 // Sets the PORT for our app to have access to it. If no env has been set, we hard code it to 3000
